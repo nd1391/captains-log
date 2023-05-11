@@ -4,7 +4,17 @@ const router = express.Router()
 const app = express();
 const PORT = process.env.PORT || 3000;
 const { connect, connection } = require('mongoose')
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
+const Log = require("./models/logs");
+
+// Database connection
+connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+connection.once('open', () => {
+    console.log('connected to mongo')
+})
 
 // View Engine Middleware Configure
 const reactViewsEngine = require('jsx-view-engine').createEngine();
@@ -28,19 +38,44 @@ app.use((req, res, next) => {
   next();
 });
 
+  // Index
+app.get('/logs', async (req, res) => {
+    console.log('Index Controller Func. running...');
+    try {
+      const foundLog = await Log.find({}) 
+      res.status(200).render('Index', { logs:
+      foundLog });
+    } catch (err) {
+      res.status(400).send(err)
+    }
+});
+
   // New // renders a form to create a new fruit
-app.get('/new', (req, res) => {
+app.get('/logs/new', (req, res) => {
     res.render('New');
 });
 
 
 // Create
-app.post('/', async (req, res) => {
+app.post('/logs', async (req, res) => {
+    console.log('we hittin it')
     try {
         req.body.shipIsBroken = req.body.shipIsBroken === 'on';
         const newLog = await Log.create(req.body);
         console.log(newLog)
-        res.redirect('Show')
+        res.redirect('/logs')
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
+
+// Show
+app.get('/logs/:id', async (req, res) => {
+    try {
+        const foundLog = await Log.findById(req.params.id)
+        res.render('Show', {
+            log: foundLog,
+        })
     } catch (err) {
         res.status(400).send(err)
     }

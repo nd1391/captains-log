@@ -8,5 +8,6 @@ const logSchema = new Schema({
 {
     timestamps: true
 })
+const Log = model('Log', logSchema)
 
 module.exports = Log;
