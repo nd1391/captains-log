@@ -1,5 +1,6 @@
 require("dotenv").config()
 const express = require('express');
+const router = express.Router()
 const app = express();
 const PORT = process.env.PORT || 3000;
 const { connect, connection } = require('mongoose')
@@ -28,9 +29,22 @@ app.use((req, res, next) => {
 });
 
   // New // renders a form to create a new fruit
-router.get('/new', (req, res) => {
-    res.render('fruits/New');
+app.get('/new', (req, res) => {
+    res.render('New');
 });
+
+
+// Create
+app.post('/', async (req, res) => {
+    try {
+        req.body.shipIsBroken = req.body.shipIsBroken === 'on';
+        const newLog = await Log.create(req.body);
+        console.log(newLog)
+        res.send(req.body)
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
 
   // Listen
 app.listen(PORT, () => {
