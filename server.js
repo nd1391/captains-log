@@ -40,7 +40,7 @@ app.post('/', async (req, res) => {
         req.body.shipIsBroken = req.body.shipIsBroken === 'on';
         const newLog = await Log.create(req.body);
         console.log(newLog)
-        res.send(req.body)
+        res.redirect('Show')
     } catch (err) {
         res.status(400).send(err)
     }
