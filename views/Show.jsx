@@ -8,7 +8,8 @@ class Show extends React.Component {
             <div>
             <Nav link='/logs' text="Home" />
             <br />
-            <h2></h2>
+            {/* GREAT METHOD FOR DISPLAYING DATES */}
+            <h2>{log.createdAt.toLocaleString()}</h2> 
             <h1> Dear Diary,</h1>
             <br />
             Title: {log.title}
