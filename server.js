@@ -55,6 +55,27 @@ app.get('/logs/new', (req, res) => {
     res.render('New');
 });
 
+// Delete
+app.delete('/:id', async (req, res) => {
+    try {
+        await Log.findByIdAndDelete(req.params.id);
+        res.redirect('./logs')
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
+
+// Update // PUT
+app.put('/logs/:id', async (req,res) => {
+    try {
+        req.body.shipIsBroken = req.body.shipIsBroken === "on";
+        const updatedLog = await Log.findByIdAndUpdate(req.params.id, req.body, {new: true})
+        // console.log(updatedLog)
+        res.redirect('/logs')
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
 
 // Create
 app.post('/logs', async (req, res) => {
@@ -66,6 +87,20 @@ app.post('/logs', async (req, res) => {
         res.redirect('/logs')
     } catch (err) {
         res.status(400).send(err)
+    }
+})
+
+  // Edit // receives the id of the fruit to move to a new route with for editing.
+app.get('/logs/:id/edit', async (req, res) => {
+    try {
+      // finding the document that we are about to edit, giving the Edit.jsx the document found through props.
+      const foundLog = await Log.findById(req.params.id)
+      res.render("Edit", {
+        log: foundLog
+      })
+    } catch(err) {
+      res.status(400).send(err)
+  
     }
 })
 
